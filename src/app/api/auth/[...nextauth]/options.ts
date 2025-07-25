@@ -21,12 +21,15 @@ export const authOptions: NextAuthOptions = {
                 try {
                     const user = await UserModel.findOne({
                         $or: [
-                            { email: credentials?.email },
-                            { username: credentials?.username },
+                            { email: credentials.identifier },
+                            { username: credentials.identifier },
                         ],
                     });
+                    // console.log(credentials);
                     if (!user) {
-                        throw new Error("No user found with this email");
+                        throw new Error(
+                            "No user found with this email/username"
+                        );
                     }
                     if (!user.isVerified) {
                         throw new Error("Please verify your acccount first");
@@ -72,7 +75,7 @@ export const authOptions: NextAuthOptions = {
     },
     session: {
         strategy: "jwt",
-        maxAge:60*60*1000,
+        maxAge: 60 * 60 * 1000,
     },
     secret: process.env.NEXTAUTH_SECRET,
 };
