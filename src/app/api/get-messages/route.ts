@@ -19,7 +19,7 @@ export async function GET(req: Request) {
         const userWithMessages = await UserModel.aggregate([
             {
                 $match: {
-                    id: userId,
+                    _id: userId,
                 },
             },
             {
@@ -37,10 +37,17 @@ export async function GET(req: Request) {
                 },
             },
         ]);
-        if (!userWithMessages || userWithMessages.length === 0) {
+        // console.log(userWithMessages)
+        if (!userWithMessages) {
             return Response.json(
                 { success: false, message: "User not found" },
                 { status: 400 }
+            );
+        }
+        if (userWithMessages.length === 0) {
+            return Response.json(
+                { success: false, message: "No messages" },
+                { status: 404 }
             );
         }
         return Response.json(
